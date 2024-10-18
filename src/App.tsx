@@ -1,14 +1,18 @@
-// import { Button } from "@/components/ui/button"
-import {StateFullLoginForm} from "@/components/StateFullLoginForm"
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { StateFullLoginForm } from './components/StateFullLoginForm';
+import { Home } from './components/Home';
 
-const App = () => {
-  return (
-  // <div className="flex items-center justify-center h-screen w-full">
-  <div className="flex flex-col items-center justify-center h-screen w-full">
-    {/* <Button variant='default'>Click Me</Button> */}
-    <StateFullLoginForm />
-  </div>  
-  );
-};
+function App() {
+    return (
+        <Router>
+            <Toaster position="top-right" />
+            <Routes>
+                <Route path="/" element={<StateFullLoginForm />} />
+                <Route path="/home" element={<Home />} />
+            </Routes>
+        </Router>
+    );
+}
 
-export default App
+export default App;

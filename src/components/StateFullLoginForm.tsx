@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,6 +9,7 @@ import { Input } from "./ui/input";
 // import { Label } from "./ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -18,6 +20,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function StateFullLoginForm() {
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     const form = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
@@ -40,19 +43,22 @@ export function StateFullLoginForm() {
             });
             
             const token = response.data.access_token;
-            // Store the token in localStorage or in a state management solution
             localStorage.setItem('token', token);
             console.log('Login successful', token);
-            // Redirect or update UI as needed
+            
+            // Show success toast and redirect
+            toast.success('Login successful!');
+            navigate('/home');
         } catch (error) {
             console.error('Login failed', error);
-            // Handle error (e.g., show error message to user)
+            toast.error('Login failed. Please try again.');
         } finally {
             setIsLoading(false);
         }
     };
 
     return(
+        <div className="flex flex-col items-center justify-center h-screen w-full">
         <Card className="w-full max-w-sm">
             <CardHeader>
                 <CardTitle className="text-2xl">Login</CardTitle>
@@ -96,5 +102,6 @@ export function StateFullLoginForm() {
                 </form>
             </Form>
         </Card>
+        </div>
     );
 }
