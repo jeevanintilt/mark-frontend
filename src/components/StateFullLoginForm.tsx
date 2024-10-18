@@ -7,10 +7,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "./ui/input";
 // import { Label } from "./ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
+import axios from 'axios';
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z.string().min(3, "Password must be at least 8 characters"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -28,10 +29,27 @@ export function StateFullLoginForm() {
 
     const onSubmit = async (data: LoginFormValues) => {
         setIsLoading(true);
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        console.log(data);
-        setIsLoading(false);
+        try {
+            const response = await axios.post('http://localhost:8000/token', {
+                username: data.email,
+                password: data.password,
+            }, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+            
+            const token = response.data.access_token;
+            // Store the token in localStorage or in a state management solution
+            localStorage.setItem('token', token);
+            console.log('Login successful', token);
+            // Redirect or update UI as needed
+        } catch (error) {
+            console.error('Login failed', error);
+            // Handle error (e.g., show error message to user)
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return(
